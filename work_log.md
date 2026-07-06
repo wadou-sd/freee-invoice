@@ -23,3 +23,6 @@
 - 結論: APIに納品書合算機能はなし。POST /invoices は明細(lines)を直接渡す方式のみ
 - 方針: GET /delivery_slips で取得→明細集計→POST /invoices（当初案②）で確定
 - 設計書 §3・§10 に反映済み
+
+🔄 2026-07-03 Supabase初期スキーマの適用（0001_init）
+- partners / billing_runs / invoice_links / issue_jobs / freee_tokens を作成（ユーザー承認済み）
