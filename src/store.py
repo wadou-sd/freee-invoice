@@ -1,6 +1,6 @@
 """Supabase(PostgREST)への薄いアクセス層。外部ライブラリ不要(urllib)。
 
-RLS有効・ポリシー無しのため、service_role キーで接続する（RLSをバイパス）。
+RLS有効・ポリシー無しのため、service_role(secret) キーで接続し RLS をバイパスする。
 """
 import json
 import urllib.request
@@ -36,6 +36,11 @@ def _request(method, path, params=None, body=None, prefer=None):
         raise RuntimeError(f"Supabase {method} {path} 失敗: {e.code} {e.read().decode()}")
 
 
+def _is_conflict(err):
+    s = str(err)
+    return "409" in s or "23505" in s or "duplicate key" in s
+
+
 # --- freee_tokens ---
 
 def get_latest_token():
@@ -52,3 +57,66 @@ def update_token(token_id, access_token, refresh_token, expires_at):
                    "expires_at": expires_at,
                    "updated_at": _now_iso()},
              prefer="return=minimal")
+
+
+# --- billing_runs ---
+
+def get_or_create_billing_run(period_ym):
+    rows = _request("GET", "billing_runs",
+                    params={"select": "*", "period_ym": f"eq.{period_ym}", "limit": 1})
+    if rows:
+        return rows[0]
+    created = _request("POST", "billing_runs",
+                       body={"period_ym": period_ym, "status": "running"},
+                       prefer="return=representation")
+    return created[0]
+
+
+def update_billing_run(run_id, status):
+    _request("PATCH", "billing_runs",
+             params={"id": f"eq.{run_id}"},
+             body={"status": status, "finished_at": _now_iso()},
+             prefer="return=minimal")
+
+
+# --- invoice_links / issue_jobs ---
+
+def get_billed_slip_ids():
+    rows = _request("GET", "invoice_links", params={"select": "freee_delivery_slip_id"})
+    return {r["freee_delivery_slip_id"] for r in (rows or [])}
+
+
+def insert_invoice_link(run_id, freee_invoice_id, freee_delivery_slip_id, period_ym):
+    try:
+        _request("POST", "invoice_links",
+                 body={"billing_run_id": run_id,
+                       "freee_invoice_id": freee_invoice_id,
+                       "freee_delivery_slip_id": freee_delivery_slip_id,
+                       "period_ym": period_ym},
+                 prefer="return=minimal")
+    except RuntimeError as e:
+        if _is_conflict(e):
+            return  # 既に紐付け済み（二重防止）
+        raise
+
+
+def record_issue_job(run_id, rep_pid, period_ym, status, freee_response=None, error=None):
+    key = f"{period_ym}:{rep_pid}"
+    body = {"billing_run_id": run_id, "status": status, "idempotency_key": key}
+    if freee_response is not None:
+        body["freee_response"] = freee_response
+    if error is not None:
+        body["error"] = error
+    try:
+        _request("POST", "issue_jobs", body=body, prefer="return=minimal")
+    except RuntimeError as e:
+        if not _is_conflict(e):
+            raise
+        upd = {"status": status, "updated_at": _now_iso()}
+        if freee_response is not None:
+            upd["freee_response"] = freee_response
+        if error is not None:
+            upd["error"] = error
+        _request("PATCH", "issue_jobs",
+                 params={"idempotency_key": f"eq.{key}"},
+                 body=upd, prefer="return=minimal")
