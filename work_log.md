@@ -30,5 +30,7 @@
 - 全テーブルRLS有効（ポリシーなし＝バックエンド専用）
 - SQLを supabase/migrations/0001_init.sql にコミット。list_tablesで5テーブル作成を確認
 
-🔄 2026-07-06 開発ロードマップ作成（docs/development-roadmap.md）
-- これまでの決定をフェーズ分けし、進捗管理の土台を作成
+✅ 2026-07-06 開発ロードマップ作成（docs/development-roadmap.md）
+- Phase 0〜7 に分割。Phase 0-1 完了、次は Phase 2（freee OAuth連携）
+- 進め方の原則: 費用ゼロ／小さく確認しながら／安全側（下書きまで自動・発行送付は手動）
+- 直近の次アクション: freeeアプリ登録とアクセストークン発行（田口側）
