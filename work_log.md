@@ -33,12 +33,12 @@
 ✅ 2026-07-06 開発ロードマップ作成（docs/development-roadmap.md）
 - Phase 0〜7 に分割。Phase 0-1 完了、次は Phase 2（freee OAuth連携）
 - 進め方の原則: 費用ゼロ／小さく確認しながら／安全側（下書きまで自動・発行送付は手動）
-- 直近の次アクション: freeeアプリ登録とアクセストークン発行（田口側）
 
-🔄 2026-07-06 Phase 2 freee OAuth連携
+✅ 2026-07-06 Phase 2 freee OAuth連携 完了
 - freeeアプリ作成（和銅農園 請求書自動作成 / Client ID: 759738689736560 / コールバックURL: oob）
 - 権限のハマりどころ: 会計の帳票権限は参照のみ（会計API帳票POST廃止の名残）
 - 解決: アプリ権限「[freee請求書] 全帳票種別」の参照＋更新を付与し再認可
 - 取得スコープ: accounting:companies:read accounting:docs:read invoice:docs:read invoice:docs:write
-- iv API 疎通OK: 請求書テンプレート取得・納品書一覧取得を確認
+- iv API 疎通OK: 請求書テンプレート(1961370窓付き/1897124窓付き封筒)・納品書一覧を取得確認
 - company_id=1506256（株式会社 和銅農園）。トークンを freee_tokens に保存
+- roadmap の Phase 2 を完了に更新。次は Phase 3（納品書取得と明細集計）
