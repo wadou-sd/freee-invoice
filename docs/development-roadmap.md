@@ -16,12 +16,22 @@
 |-------|------|------|
 | 0 | 環境構築 | ✅ 完了 |
 | 1 | 設計（全体像・データ設計・API方針・DBスキーマ） | ✅ 完了 |
-| 2 | freee OAuth連携（トークン取得・保存・更新） | ⬜ 未着手（次） |
-| 3 | 納品書の取得と明細集計 | ⬜ 未着手 |
+| 2 | freee OAuth連携（トークン取得・保存・更新） | ✅ 完了 |
+| 3 | 納品書の取得と明細集計 | ⬜ 未着手（次） |
 | 4 | 請求書の下書き作成と記録 | ⬜ 未着手 |
 | 5 | 月次締めバッチの統合（cron） | ⬜ 未着手 |
 | 6 | 運用開始・検証 | ⬜ 未着手 |
 | 7 | 将来拡張 | ⬜ 保留 |
+
+## 確定した接続情報（メモ）
+
+- 事業所: 株式会社 和銅農園 / **company_id = 1506256**
+- アプリ: 和銅農園 請求書自動作成 / Client ID = 759738689736560 / コールバックURL = `urn:ietf:wg:oauth:2.0:oob`
+- 必要なアプリ権限: **[freee請求書] 全帳票種別（参照＋更新）** ＋ [会計] 事業所（参照）
+- 取得スコープ: `accounting:companies:read accounting:docs:read invoice:docs:read invoice:docs:write`
+- 請求書テンプレート: 1961370（窓付き） / 1897124（窓付き封筒）
+- トークンエンドポイント: `https://accounts.secure.freee.co.jp/public_api/token`
+- APIエンドポイント: `https://api.freee.co.jp/iv`
 
 ---
 
@@ -36,19 +46,19 @@
 - 合算方式を確定（APIに合算なし → `GET /delivery_slips` で取得し明細集計 → `POST /invoices`）。
 - `supabase/migrations/0001_init.sql`：partners / billing_runs / invoice_links / issue_jobs / freee_tokens を作成済み。
 
-## Phase 2: freee OAuth連携 ⬜（次に着手）
+## Phase 2: freee OAuth連携 ✅
 
-**目的**: freee請求書APIを叩ける状態にする。
+**目的**: freee請求書APIを叩ける状態にする。→ 達成。
 
-- [ ] freee開発者サイトでアプリ登録し client_id / client_secret を取得（田口側）。
-- [ ] 認可フロー（OAuth2.0）でアクセストークン／リフレッシュトークンを取得。
-- [ ] トークンを `freee_tokens` に保存。company_id（事業所ID）も保持。
-- [ ] 有効期限前の自動リフレッシュ処理。
-- [ ] 疎通確認：`GET /invoices/templates` などの読み取りで200が返ること。
+- [x] freeeでアプリ登録し client_id / client_secret を取得。
+- [x] 認可フロー（OAuth2.0, oob）でアクセストークン／リフレッシュトークンを取得。
+- [x] トークンを `freee_tokens` に保存（company_id 含む）。
+- [x] 疎通確認：`GET /invoices/templates`・`GET /delivery_slips` が200。
+- [ ] 有効期限前の自動リフレッシュ処理（バッチ実装時に組み込む）。
 
-**田口側の準備**: freeeアプリ登録とアクセストークン発行。
+**ハマりどころ（記録）**: 会計側の帳票権限は「参照」のみ（会計API帳票POST廃止の名残）。請求書の作成には別途 **[freee請求書] 全帳票種別（参照＋更新）** の権限が必要で、付与＋再認可で `invoice:docs:write` が付き解決した。
 
-## Phase 3: 納品書の取得と明細集計 ⬜
+## Phase 3: 納品書の取得と明細集計 ⬜（次に着手）
 
 **目的**: 請求書の元データを作る。
 
@@ -92,4 +102,4 @@
 
 ## 直近の次アクション
 
-1. **Phase 2 の入口**：freeeアプリ登録とアクセストークン発行（田口側）。準備ができ次第、OAuth連携の実装に着手。
+1. **Phase 3**：`GET /delivery_slips` の絞り込み（取引先・期間）と明細構造を実データで確認し、取引先単位の明細集計ロジックを設計する。
