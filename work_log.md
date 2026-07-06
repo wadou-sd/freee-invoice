@@ -24,5 +24,8 @@
 - 方針: GET /delivery_slips で取得→明細集計→POST /invoices（当初案②）で確定
 - 設計書 §3・§10 に反映済み
 
-🔄 2026-07-03 Supabase初期スキーマの適用（0001_init）
+✅ 2026-07-03 Supabase初期スキーマの適用（0001_init）
 - partners / billing_runs / invoice_links / issue_jobs / freee_tokens を作成（ユーザー承認済み）
+- 二重請求防止: invoice_links.freee_delivery_slip_id と issue_jobs.idempotency_key にUNIQUE
+- 全テーブルRLS有効（ポリシーなし＝バックエンド専用）
+- SQLを supabase/migrations/0001_init.sql にコミット。list_tablesで5テーブル作成を確認
