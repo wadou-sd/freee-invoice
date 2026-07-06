@@ -12,7 +12,7 @@
 ✅ 2026-07-03 システム設計（docs/system-design.md）
 - 納品書を正／月末締めで取引先ごとに集計／下書きまで自動＋発行・送付は手動（方式B）
 
-✅ 2026-07-03 合算方式検証：APIに合算なし。GET /delivery_slips → 明細集計 → POST /invoices で確定
+✅ 2026-07-03 合算方式検証：APIに合算なし。GET /delivery_slips → 明細集計 → POST /invoices
 
 ✅ 2026-07-03 Supabase初期スキーマ（0001_init）partners/billing_runs/invoice_links/issue_jobs/freee_tokens。全RLS有効
 
@@ -24,14 +24,17 @@
 
 ✅ 2026-07-06 Phase 4 テスト：秩鉄商事2026-06を POST /invoices で下書き作成 INV-0000000952 / 53,676円（確認後取消予定）
 
-✅ 2026-07-06 当期の未請求チェック：上林・大井常明・福島陽子 の3件のみ（他は請求済み、田口さんの確認でそのまま）
+✅ 2026-07-06 当期の未請求チェック：上林・大井常明・福島陽子 の3件のみ（他は請求済み、そのまま）
 
 ✅ 2026-07-06 Phase 5 トークン自動更新 完成・動作確認
 - VPSをmainへ同期。.env作成(chmod600)。依存ゼロで config/store(Supabase REST)/freee_token 実装
 - リフレッシュ＋Supabase書戻し検証 OK
 
 ✅ 2026-07-06 Phase 5 締めバッチ本体 実装・ドライラン検証
-- src/aliases.py(名寄せ pid→代表), freee_api.py(iv), billing.py(本体), scripts/run_billing.py 追加
-- 二重防止2段: ①invoice_links既出の納品書除外 ②freee上で代表取引先×当月の請求書があれば除外
-- ドライラン 2026-03: 納品書13→取引先8、既存2件skip、作成予定6通（佐野さんは名寄せで5枚→1通）を確認。POSTなし
-- 次: 月末cron設定（承認後）。初回本番は7月末（現時点7月は納品0件）
+- src/aliases.py / freee_api.py / billing.py / scripts/run_billing.py 追加
+- 二重防止2段。ドライラン 2026-03: 納品書13→取引先8、既存2件skip、作成予定6通を確認
+
+✅ 2026-07-06 Phase 5 月末cron設定・稼働確認（MVP完成）
+- crontab：毎月末日 23:30 に当月分を下書き作成→billing.log追記
+- cron相当コマンドを手動実行し 2026-07（納品0件）で正常終了・ログ出力を確認。VPS最新同期
+- 以降は無人運用。初回本番は7月末、田口さんはfreeeで下書き確認→発行・送付（方式B）
