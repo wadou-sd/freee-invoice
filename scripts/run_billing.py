@@ -1,4 +1,4 @@
-"""締めバッチ実行。
+r"""締めバッチ実行。
 
 使い方:
   python3 scripts/run_billing.py             # 当月分を下書き作成
