@@ -29,3 +29,6 @@
 - 二重請求防止: invoice_links.freee_delivery_slip_id と issue_jobs.idempotency_key にUNIQUE
 - 全テーブルRLS有効（ポリシーなし＝バックエンド専用）
 - SQLを supabase/migrations/0001_init.sql にコミット。list_tablesで5テーブル作成を確認
+
+🔄 2026-07-06 開発ロードマップ作成（docs/development-roadmap.md）
+- これまでの決定をフェーズ分けし、進捗管理の土台を作成
