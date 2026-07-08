@@ -31,10 +31,13 @@
 - リフレッシュ＋Supabase書戻し検証 OK
 
 ✅ 2026-07-06 Phase 5 締めバッチ本体 実装・ドライラン検証
-- src/aliases.py / freee_api.py / billing.py / scripts/run_billing.py 追加
-- 二重防止2段。ドライラン 2026-03: 納品書13→取引先8、既存2件skip、作成予定6通を確認
+- src/aliases.py / freee_api.py / billing.py / scripts/run_billing.py 追加。二重防止2段
+- ドライラン 2026-03: 納品書13→取引先8、既存2件skip、作成予定6通を確認
 
 ✅ 2026-07-06 Phase 5 月末cron設定・稼働確認（MVP完成）
 - crontab：毎月末日 23:30 に当月分を下書き作成→billing.log追記
-- cron相当コマンドを手動実行し 2026-07（納品0件）で正常終了・ログ出力を確認。VPS最新同期
-- 以降は無人運用。初回本番は7月末、田口さんはfreeeで下書き確認→発行・送付（方式B）
+- 2026-07（納品0件）で正常終了・ログ出力を確認。初回本番は7月末
+
+✅ 2026-07-06 ドキュメント同期更新
+- system-design.md を実装完了状態へ更新（対象範囲2025-08・名寄せ・スコープ・コード構成・cron・二重防止2段を反映）
+- roadmap / partner-aliases と整合
