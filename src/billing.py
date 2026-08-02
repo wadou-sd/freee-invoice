@@ -13,7 +13,8 @@ import calendar
 
 from . import config, freee_token, freee_api, store, aliases
 
-DEFAULT_TEMPLATE_ID = 1961370  # 窓付き
+# 和銅農園の通常フォーマット。1897124=窓付き封筒 / 1961370=窓付き
+DEFAULT_TEMPLATE_ID = 1897124
 _LINE_KEYS = ("type", "description", "quantity", "unit", "unit_price",
               "tax_rate", "reduced_tax_rate")
 
