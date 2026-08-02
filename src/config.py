@@ -27,8 +27,9 @@ def _req(key):
 FREEE_CLIENT_ID = _req("FREEE_CLIENT_ID")
 FREEE_CLIENT_SECRET = _req("FREEE_CLIENT_SECRET")
 FREEE_COMPANY_ID = _req("FREEE_COMPANY_ID")
-SUPABASE_URL = _req("SUPABASE_URL").rstrip("/")
-SUPABASE_SERVICE_KEY = _req("SUPABASE_SERVICE_KEY")
+# Supabaseは廃止（SQLiteへ移行済み）。互換のため任意で残すが必須ではない。
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 BILLING_START_DATE = os.environ.get("BILLING_START_DATE", "2025-08-01")
 
 REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob"
